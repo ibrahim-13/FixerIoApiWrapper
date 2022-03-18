@@ -45,8 +45,6 @@ public class FixerApiWrapper
             ? new HttpClient(new LoggedHttpClientHandler(true))
             : new HttpClient());
 
-        httpClient.BaseAddress = new Uri(opt?.BaseUrl ?? Constants.FixerIoBaseApi);
-
         _requestClient = new RequestClient(
             httpClient,
             opt?.CacheStorage ?? new ConcurrentDictionary<string, (string, HttpResponseMessage?)>());
@@ -55,8 +53,7 @@ public class FixerApiWrapper
 
     public async Task<SymbolResult?> GetSymbolsAsync(CancellationToken cancellationToken = default)
     {
-        var builder = new UrlBuilder(Constants.FixerIoBaseApi);
-        builder.SetPath(Constants.EndpointSymbols);
+        var builder = GetUrlBuilderWithPath(Constants.EndpointSymbols);
         return await _requestClient.GetCachedAsync<SymbolResult>(builder, cancellationToken);
     }
 
@@ -65,8 +62,7 @@ public class FixerApiWrapper
         string[]? symbols = null,
         CancellationToken cancellationToken = default)
     {
-        var builder = new UrlBuilder(Constants.FixerIoBaseApi);
-        builder.SetPath(Constants.EndpointLatest);
+        var builder = GetUrlBuilderWithPath(Constants.EndpointLatest);
 
         if (baseCurrencyCode != null)
             builder.AddParameter(Constants.ParameterBase, baseCurrencyCode);
@@ -92,8 +88,7 @@ public class FixerApiWrapper
         if (amount == default)
             throw new ArgumentException($"Amount can not be {amount}", nameof(amount));
 
-        var builder = new UrlBuilder(Constants.FixerIoBaseApi);
-        builder.SetPath(Constants.EndpointConvert);
+        var builder = GetUrlBuilderWithPath(Constants.EndpointConvert);
 
         builder.AddParameter(Constants.ParameterFrom, fromCurrencyCode);
         builder.AddParameter(Constants.ParameterTo, toCurrencyCode);
@@ -105,4 +100,7 @@ public class FixerApiWrapper
 
         return response;
     }
+
+    private UrlBuilder GetUrlBuilderWithPath(string path) => new UrlBuilder(Constants.FixerIoBaseApi)
+        .SetPath(Constants.EndpointConvert);
 }

@@ -6,11 +6,16 @@ internal class UrlBuilder
 {
     private readonly UriBuilder _uriBuilder;
 
+    public UrlBuilder() => _uriBuilder = new UriBuilder();
     public UrlBuilder(string baseUrl) => _uriBuilder = new UriBuilder(baseUrl);
 
-    public void SetPath(string path) => _uriBuilder.Path = path;
+    public UrlBuilder SetPath(string path)
+    {
+        _uriBuilder.Path = path;
+        return this;
+    }
 
-    public void AddParameter(string name, string value)
+    public UrlBuilder AddParameter(string name, string value)
     {
         var hasPrev = _uriBuilder.Query == string.Empty;
         var param = HttpUtility.UrlEncode(name) + "=" + HttpUtility.UrlEncode(value);
@@ -18,6 +23,7 @@ internal class UrlBuilder
             _uriBuilder.Query = _uriBuilder.Query + "&" + param;
         else
             _uriBuilder.Query = param;
+        return this;
     }
 
     public Uri Uri() => _uriBuilder.Uri;
