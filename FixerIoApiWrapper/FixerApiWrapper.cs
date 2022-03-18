@@ -5,31 +5,51 @@ using FixerIoApiWrapper.Request;
 
 namespace FixerIoApiWrapper;
 
+public class FixerIoApiWrapperOptions
+{
+    /// <summary>
+    /// Base Url for API requests
+    /// </summary>
+    public string? BaseUrl { get; set; }
+    /// <summary>
+    /// Use the provided HttpClient for making API calls
+    /// </summary>
+    public HttpClient? HttpClient { get; set; }
+    /// <summary>
+    /// Cache Storage for API responses
+    /// </summary>
+    public IDictionary<string, (string, HttpResponseMessage?)>? CacheStorage { get; set; }
+    /// <summary>
+    /// Log API responses for debugging.
+    /// NOTE: This options will not work if HttpClient is provided in the options.
+    /// </summary>
+    public bool? EnableApiResponseLogging { get; set; }
+}
+
 public class FixerApiWrapper
 {
     private readonly RequestClient _requestClient;
 
-    private static void ValidateAccessKey(string accessKey)
+    /// <summary>
+    /// Construcotr
+    /// </summary>
+    /// <param name="accessKey">Access Key provided by Fixer.io</param>
+    /// <param name="opt">Options</param>
+    /// <exception cref="ArgumentNullException">Providing null, empty or whitespace value for access key will throw exception</exception>
+    public FixerApiWrapper(string accessKey, FixerIoApiWrapperOptions? opt = default)
     {
         if (string.IsNullOrWhiteSpace(accessKey) || string.IsNullOrEmpty(accessKey))
             throw new ArgumentNullException(nameof(accessKey));
-    }
 
-    public FixerApiWrapper(string accessKey) : this(accessKey, false) { }
+        var httpClient = opt?.HttpClient ?? (opt?.EnableApiResponseLogging == true
+            ? new HttpClient(new LoggedHttpClientHandler(true))
+            : new HttpClient());
 
-    public FixerApiWrapper(string accessKey, HttpClient httpClient)
-        : this(accessKey, httpClient, new ConcurrentDictionary<string, (string, HttpResponseMessage?)>()) { }
+        httpClient.BaseAddress = new Uri(opt?.BaseUrl ?? Constants.FixerIoBaseApi);
 
-    public FixerApiWrapper(string accessKey, bool enableLogging)
-        : this(accessKey, enableLogging ? new HttpClient() : new HttpClient(new LoggedHttpClientHandler(enableLogging))) { }
-
-    public FixerApiWrapper(string accessKey, HttpClient httpClient, IDictionary<string, (string, HttpResponseMessage?)> cacheStorage)
-    {
-        ValidateAccessKey(accessKey);
-
-        if (httpClient.BaseAddress == null) httpClient.BaseAddress = new Uri(Constants.FixerIoBaseApi);
-
-        _requestClient = new RequestClient(httpClient, cacheStorage);
+        _requestClient = new RequestClient(
+            httpClient,
+            opt?.CacheStorage ?? new ConcurrentDictionary<string, (string, HttpResponseMessage?)>());
         _requestClient.AddDefaultParameter(Constants.HeaderNameAccessKey, accessKey);
     }
 
@@ -71,7 +91,7 @@ public class FixerApiWrapper
             throw new ArgumentNullException(nameof(toCurrencyCode));
         if (amount == default)
             throw new ArgumentException($"Amount can not be {amount}", nameof(amount));
-        
+
         var builder = new UrlBuilder(Constants.FixerIoBaseApi);
         builder.SetPath(Constants.EndpointConvert);
 
