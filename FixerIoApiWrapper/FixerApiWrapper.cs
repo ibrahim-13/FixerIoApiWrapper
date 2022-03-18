@@ -53,7 +53,7 @@ public class FixerApiWrapper
 
     public async Task<SymbolResult?> GetSymbolsAsync(CancellationToken cancellationToken = default)
     {
-        var builder = GetUrlBuilderWithPath(Constants.EndpointSymbols);
+        var builder = GetUrlInfoWithPath(Constants.EndpointSymbols);
         return await _requestClient.GetCachedAsync<SymbolResult>(builder, cancellationToken);
     }
 
@@ -62,7 +62,7 @@ public class FixerApiWrapper
         string[]? symbols = null,
         CancellationToken cancellationToken = default)
     {
-        var builder = GetUrlBuilderWithPath(Constants.EndpointLatest);
+        var builder = GetUrlInfoWithPath(Constants.EndpointLatest);
 
         if (baseCurrencyCode != null)
             builder.AddParameter(Constants.ParameterBase, baseCurrencyCode);
@@ -88,7 +88,7 @@ public class FixerApiWrapper
         if (amount == default)
             throw new ArgumentException($"Amount can not be {amount}", nameof(amount));
 
-        var builder = GetUrlBuilderWithPath(Constants.EndpointConvert);
+        var builder = GetUrlInfoWithPath(Constants.EndpointConvert);
 
         builder.AddParameter(Constants.ParameterFrom, fromCurrencyCode);
         builder.AddParameter(Constants.ParameterTo, toCurrencyCode);
@@ -101,6 +101,6 @@ public class FixerApiWrapper
         return response;
     }
 
-    private static UrlBuilder GetUrlBuilderWithPath(string path) => new UrlBuilder(Constants.FixerIoBaseApi)
+    private static UrlInfo GetUrlInfoWithPath(string path) => new UrlInfo(Constants.FixerIoBaseApi)
         .SetPath(path);
 }

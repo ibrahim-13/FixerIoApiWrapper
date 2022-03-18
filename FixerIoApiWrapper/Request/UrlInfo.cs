@@ -2,20 +2,20 @@
 
 namespace FixerIoApiWrapper.Request;
 
-internal class UrlBuilder
+internal class UrlInfo
 {
     private readonly UriBuilder _uriBuilder;
 
-    public UrlBuilder() => _uriBuilder = new UriBuilder();
-    public UrlBuilder(string baseUrl) => _uriBuilder = new UriBuilder(baseUrl);
+    public UrlInfo() => _uriBuilder = new UriBuilder();
+    public UrlInfo(string baseUrl) => _uriBuilder = new UriBuilder(baseUrl);
 
-    public UrlBuilder SetPath(string path)
+    public UrlInfo SetPath(string path)
     {
         _uriBuilder.Path = path;
         return this;
     }
 
-    public UrlBuilder AddParameter(string name, string value)
+    public UrlInfo AddParameter(string name, string value)
     {
         var hasPrev = _uriBuilder.Query == string.Empty;
         var param = HttpUtility.UrlEncode(name) + "=" + HttpUtility.UrlEncode(value);

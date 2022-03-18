@@ -78,7 +78,7 @@ internal class RequestClient
 
     public void AddDefaultParameter(string name, string value) => _defaultParams.Add((name, value));
 
-    public async Task<T?> GetCachedAsync<T>(UrlBuilder urlBuilder, CancellationToken cancellationToken) where T : BaseResult
+    public async Task<T?> GetCachedAsync<T>(UrlInfo urlBuilder, CancellationToken cancellationToken) where T : BaseResult
     {
         foreach (var (name, value) in _defaultParams)
             urlBuilder.AddParameter(name, value);
