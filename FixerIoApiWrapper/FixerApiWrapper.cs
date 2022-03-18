@@ -101,6 +101,6 @@ public class FixerApiWrapper
         return response;
     }
 
-    private UrlBuilder GetUrlBuilderWithPath(string path) => new UrlBuilder(Constants.FixerIoBaseApi)
-        .SetPath(Constants.EndpointConvert);
+    private static UrlBuilder GetUrlBuilderWithPath(string path) => new UrlBuilder(Constants.FixerIoBaseApi)
+        .SetPath(path);
 }
