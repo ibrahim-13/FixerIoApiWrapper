@@ -2,6 +2,9 @@
 using System.Globalization;
 using FixerIoApiWrapper.Models;
 using FixerIoApiWrapper.Request;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("Tests")]
 
 namespace FixerIoApiWrapper;
 

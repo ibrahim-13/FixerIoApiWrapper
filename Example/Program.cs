@@ -8,5 +8,7 @@ var wrapper = new FixerApiWrapper("API_KEY_HERE", new()
     EnableApiResponseLogging = false,
 #endif
 });
-_ = await wrapper.GetSymbolsAsync();
+
+var symbols = await wrapper.GetSymbolsAsync();
+
 Console.WriteLine("Hello, World!");
