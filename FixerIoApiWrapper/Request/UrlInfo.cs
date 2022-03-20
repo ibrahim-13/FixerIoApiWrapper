@@ -6,7 +6,6 @@ internal class UrlInfo
 {
     private readonly UriBuilder _uriBuilder;
 
-    public UrlInfo() => _uriBuilder = new UriBuilder();
     public UrlInfo(string baseUrl) => _uriBuilder = new UriBuilder(baseUrl);
 
     public UrlInfo SetPath(string path)
@@ -17,7 +16,7 @@ internal class UrlInfo
 
     public UrlInfo AddParameter(string name, string value)
     {
-        var hasPrev = _uriBuilder.Query == string.Empty;
+        var hasPrev = _uriBuilder.Query != string.Empty;
         var param = HttpUtility.UrlEncode(name) + "=" + HttpUtility.UrlEncode(value);
         if (hasPrev)
             _uriBuilder.Query = _uriBuilder.Query + "&" + param;
@@ -28,5 +27,5 @@ internal class UrlInfo
 
     public Uri Uri() => _uriBuilder.Uri;
 
-    public string Url() => _uriBuilder.Uri.OriginalString;
+    public string Url() => _uriBuilder.Uri.AbsoluteUri;
 }
