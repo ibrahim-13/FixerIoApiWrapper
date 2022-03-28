@@ -34,7 +34,7 @@ public class FixerApiWrapper
     private readonly RequestClient _requestClient;
 
     /// <summary>
-    /// Construcotr
+    /// Constructor
     /// </summary>
     /// <param name="accessKey">Access Key provided by Fixer.io</param>
     /// <param name="opt">Options</param>

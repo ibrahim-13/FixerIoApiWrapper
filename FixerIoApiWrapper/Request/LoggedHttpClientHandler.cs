@@ -7,7 +7,7 @@ internal class LoggedHttpClientHandler : HttpClientHandler
     public LoggedHttpClientHandler() : this(false) { }
     public LoggedHttpClientHandler(bool enableLogging) => _isLoggingEnabled = enableLogging;
 
-    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
+    protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
         CancellationToken cancellationToken)
     {
         if (!_isLoggingEnabled) return await base.SendAsync(request, cancellationToken);
