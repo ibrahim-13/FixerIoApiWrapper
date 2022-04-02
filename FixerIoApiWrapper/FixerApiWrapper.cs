@@ -51,7 +51,7 @@ public class FixerApiWrapper
         _requestClient = new RequestClient(
             httpClient,
             opt?.CacheStorage ?? new ConcurrentDictionary<string, (string, HttpResponseMessage?)>());
-        _requestClient.AddDefaultParameter(Constants.HeaderNameAccessKey, accessKey);
+        _requestClient.AddDefaultQueryParameter(Constants.HeaderNameAccessKey, accessKey);
     }
 
     public async Task<SymbolResult?> GetSymbolsAsync(CancellationToken cancellationToken = default)
@@ -68,9 +68,9 @@ public class FixerApiWrapper
         var builder = GetUrlInfoWithPath(Constants.EndpointLatest);
 
         if (baseCurrencyCode != null)
-            builder.AddParameter(Constants.ParameterBase, baseCurrencyCode);
+            builder.AddQueryParameter(Constants.ParameterBase, baseCurrencyCode);
         if (symbols is { Length: > 0 })
-            builder.AddParameter(Constants.ParameterSymbols, string.Join(",", symbols));
+            builder.AddQueryParameter(Constants.ParameterSymbols, string.Join(",", symbols));
 
         var response = await _requestClient.GetCachedAsync<LatestRatesResult>(builder, cancellationToken);
 
@@ -93,11 +93,11 @@ public class FixerApiWrapper
 
         var builder = GetUrlInfoWithPath(Constants.EndpointConvert);
 
-        builder.AddParameter(Constants.ParameterFrom, fromCurrencyCode);
-        builder.AddParameter(Constants.ParameterTo, toCurrencyCode);
-        builder.AddParameter(Constants.ParameterAmount, amount.ToString(CultureInfo.InvariantCulture));
+        builder.AddQueryParameter(Constants.ParameterFrom, fromCurrencyCode);
+        builder.AddQueryParameter(Constants.ParameterTo, toCurrencyCode);
+        builder.AddQueryParameter(Constants.ParameterAmount, amount.ToString(CultureInfo.InvariantCulture));
         if (date != default)
-            builder.AddParameter(Constants.ParameterDate, date.ToString(Constants.FormatDateForParameter));
+            builder.AddQueryParameter(Constants.ParameterDate, date.ToString(Constants.FormatDateForParameter));
 
         var response = await _requestClient.GetCachedAsync<ConvertResult>(builder, cancellationToken);
 

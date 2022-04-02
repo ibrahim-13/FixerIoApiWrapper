@@ -6,6 +6,7 @@ using FixerIoApiWrapper.Request;
 using System.Threading.Tasks;
 using System.Threading;
 using FixerIoApiWrapper.Models;
+using System.Web;
 
 namespace Tests.Request;
 
@@ -26,7 +27,7 @@ internal class MockHttpMessageHandler : DelegatingHandler
     }
 }
 
-public class RequestClientTest
+public class RequestClientTest : IDisposable
 {
     private readonly MockHttpMessageHandler _mockHttpMessageHandler;
     private readonly HttpClient _httpClient;
@@ -39,19 +40,40 @@ public class RequestClientTest
     }
 
     [Fact]
-    public async Task Can_Set_Global_Headers()
+    public async Task Can_Set_DefaultHeaders()
     {
-        _requestClient.AddDefaultHeader("test-header", "test-header-value");
+        const string headerName = "test-header";
+        const string headerValue = "test-header-value";
+        _requestClient.AddDefaultHeader(headerName, headerValue);
         _mockHttpMessageHandler.OnBeforeSendAsync = delegate (HttpRequestMessage request) {
-            if (request.Headers.TryGetValues("test-header", out var values)) {
-                if (!values.Contains("test-header-value")) throw new Exception("Header value not found");
+            if (request.Headers.TryGetValues(headerName, out var values)) {
+                if (!values.Contains(headerValue)) throw new Exception("Header value not found");
             }
             else throw new Exception("Header not found");
         };
         var urlInfo = new UrlInfo("https://base.com");
-        //await _requestClient.GetCachedAsync<BaseResult>(urlInfo);
         var exception = await Record.ExceptionAsync(() => _requestClient.GetCachedAsync<BaseResult>(urlInfo));
         Assert.Null(exception);
+    }
+
+    [Fact]
+    public async Task Can_Set_DefaultParameters()
+    {
+        const string paramName = "test-param";
+        const string paramValue = "test-param-value";
+        _requestClient.AddDefaultQueryParameter(paramName, paramValue);
+        _mockHttpMessageHandler.OnBeforeSendAsync = delegate (HttpRequestMessage request) {
+            if (!(HttpUtility.ParseQueryString(request.RequestUri?.Query ?? string.Empty).Get(paramName) == paramValue))
+                throw new Exception("Query parameter not found");
+        };
+        var urlInfo = new UrlInfo("https://base.com");
+        var exception = await Record.ExceptionAsync(() => _requestClient.GetCachedAsync<BaseResult>(urlInfo));
+        Assert.Null(exception);
+    }
+
+    public void Dispose()
+    {
         _mockHttpMessageHandler.OnBeforeSendAsync = null;
+        _mockHttpMessageHandler.ResponseMessage = null;
     }
 }

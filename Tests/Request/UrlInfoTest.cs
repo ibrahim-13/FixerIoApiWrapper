@@ -35,22 +35,22 @@ public class UrlInfoTest {
 
         // Single Parameter
         var urlInfo = new UrlInfo(url)
-            .AddParameter("param1", "value1");
+            .AddQueryParameter("param1", "value1");
         actual = url + "?param1=value1";
         Assert.Equal(actual, urlInfo.Url());
         Assert.Equal(actual, urlInfo.Uri().AbsoluteUri);
 
         // Multiple Parameter
         var urlInfo2 = new UrlInfo(url)
-            .AddParameter("param1", "value1")
-            .AddParameter("param2", "value2");
+            .AddQueryParameter("param1", "value1")
+            .AddQueryParameter("param2", "value2");
         actual = url + "?param1=value1&param2=value2";
         Assert.Equal(actual, urlInfo2.Url());
         Assert.Equal(actual, urlInfo2.Uri().AbsoluteUri);
 
         // Parameter that needs to be URL Encoded
         var urlInfo3 = new UrlInfo(url)
-            .AddParameter("param 1", "value 1");
+            .AddQueryParameter("param 1", "value 1");
         actual = $"{url}?{HttpUtility.UrlEncode("param 1")}={HttpUtility.UrlEncode("value 1")}";
         Assert.Equal(actual, urlInfo3.Url());
         Assert.Equal(actual, urlInfo3.Uri().AbsoluteUri);

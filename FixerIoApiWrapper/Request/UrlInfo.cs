@@ -14,7 +14,7 @@ internal class UrlInfo
         return this;
     }
 
-    public UrlInfo AddParameter(string name, string value)
+    public UrlInfo AddQueryParameter(string name, string value)
     {
         var hasPrev = _uriBuilder.Query != string.Empty;
         var param = HttpUtility.UrlEncode(name) + "=" + HttpUtility.UrlEncode(value);

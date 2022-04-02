@@ -76,12 +76,12 @@ internal class RequestClient
 
     public void AddDefaultHeader(string name, string value) => _httpClient.DefaultRequestHeaders.Add(name, value);
 
-    public void AddDefaultParameter(string name, string value) => _defaultParams.Add((name, value));
+    public void AddDefaultQueryParameter(string name, string value) => _defaultParams.Add((name, value));
 
     public async Task<T?> GetCachedAsync<T>(UrlInfo urlBuilder, CancellationToken cancellationToken = default) where T : BaseResult
     {
         foreach (var (name, value) in _defaultParams)
-            urlBuilder.AddParameter(name, value);
+            urlBuilder.AddQueryParameter(name, value);
         var uri = urlBuilder.Uri();
         using var request = new HttpRequestMessage(HttpMethod.Get, uri);
         AddCacheControlHeaders(request, uri);
