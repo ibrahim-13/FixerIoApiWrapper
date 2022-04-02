@@ -8,7 +8,6 @@ namespace FixerIoApiWrapper.Request;
 internal class RequestClient
 {
     #region Variables
-    private const string HeaderDateFormat = "ddd, dd MMM yyy HH:mm:ss GMT";
     private readonly IDictionary<string, (string, HttpResponseMessage?)> _cacheStorage;
     private readonly HttpClient _httpClient;
 
@@ -61,7 +60,7 @@ internal class RequestClient
         }
 
         var eTag = response.Headers.ETag?.Tag ?? string.Empty;
-        var date = response.Headers.Date?.ToString(HeaderDateFormat) ?? string.Empty;
+        var date = response.Headers.Date?.ToString(Constants.HeaderDateFormat) ?? string.Empty;
 
         if (eTag != string.Empty && date != string.Empty)
         {

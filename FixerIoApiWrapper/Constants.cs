@@ -30,5 +30,7 @@ internal static class Constants
 
     #region Others
     public const string FormatDateForParameter = "yyyy-MM-dd";
+    //public const string HeaderDateFormat = "ddd, dd MMM yyy HH:mm:ss GMT";
+    public const string HeaderDateFormat = "R";
     #endregion
 }
